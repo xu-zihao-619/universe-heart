@@ -48,9 +48,9 @@
         const canvas = document.getElementById('heartCanvas');
         const ctx = canvas.getContext('2d');
         
-        // 全局配置 - 爱心适当放大
+        // 全局配置 - 爱心缩小调整
         let CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_CENTER_X, CANVAS_CENTER_Y;
-        const IMAGE_ENLARGE = 14;  // 从11调整到14，适当放大爱心
+        const IMAGE_ENLARGE = 11;  // 从14调整到11，缩小爱心整体尺寸
         const HEART_COLOR = 'pink'; // 保持Python原版颜色
         
         // 设置Canvas尺寸（填满窗口）
@@ -183,11 +183,11 @@
                 
                 const all_points = [];
                 
-                // 光环效果 - 保持Python原版逻辑（光环也相应放大）
+                // 光环效果 - 同步缩小光环
                 const heart_halo_point = new Set();
                 for (let i = 0; i < halo_number; i++) {
                     const t = Math.random() * 2 * Math.PI;
-                    let point = heart_function(t, 14); // 光环也从11调整到14
+                    let point = heart_function(t, 11); // 从14调整到11，同步缩小光环
                     point = shrink(point.x, point.y, halo_radius);
                     
                     const key = `${Math.round(point.x)},${Math.round(point.y)}`;
