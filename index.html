@@ -48,10 +48,10 @@
         const canvas = document.getElementById('heartCanvas');
         const ctx = canvas.getContext('2d');
         
-        // 全局配置 - 爱心缩小调整
+        // 全局配置 - 爱心大小可以适应手机版本打开
         let CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_CENTER_X, CANVAS_CENTER_Y;
-        const IMAGE_ENLARGE = 11;  // 从14调整到11，缩小爱心整体尺寸
-        const HEART_COLOR = 'pink'; // 保持Python原版颜色
+        const IMAGE_ENLARGE = 11;  
+        const HEART_COLOR = 'pink';
         
         // 设置Canvas尺寸（填满窗口）
         function resizeCanvas() {
@@ -67,7 +67,7 @@
             CANVAS_CENTER_X = CANVAS_WIDTH / 2;
             CANVAS_CENTER_Y = CANVAS_HEIGHT / 2;
             
-            // 重新创建爱心实例以适应新尺寸
+            // 创建爱心实例以适应尺寸
             if (typeof heart !== 'undefined') {
                 heart = new Heart();
             }
@@ -76,8 +76,8 @@
         // 监听窗口大小变化
         window.addEventListener('resize', resizeCanvas);
         
-        // ==================== 保持Python原版算法不变 ====================
-        // 爱心函数生成器（完全复刻Python）
+        
+        // 爱心函数生成器
         function heart_function(t, shrink_ratio = IMAGE_ENLARGE) {
             const x = 16 * Math.pow(Math.sin(t), 3);
             const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
@@ -89,7 +89,7 @@
             return { x: Math.round(scaledX), y: Math.round(scaledY) };
         }
         
-        // 随机内部扩散（完全复刻Python）
+        // 随机内部扩散
         function scatter_inside(x, y, beta = 0.15) {
             const ratio_x = -beta * Math.log(Math.random());
             const ratio_y = -beta * Math.log(Math.random());
@@ -100,7 +100,7 @@
             return { x: x - dx, y: y - dy };
         }
         
-        // 抖动效果（完全复刻Python）
+        // 抖动效果
         function shrink(x, y, ratio) {
             const denominator = Math.pow(Math.pow(x - CANVAS_CENTER_X, 2) + Math.pow(y - CANVAS_CENTER_Y, 2), 0.6);
             const force = -1 / denominator;
@@ -111,12 +111,12 @@
             return { x: x - dx, y: y - dy };
         }
         
-        // 自定义曲线函数（完全复刻Python）
+        // 自定义曲线函数
         function curve(p) {
             return 4 * (2 * Math.sin(4 * p)) / (2 * Math.PI);
         }
         
-        // ==================== 爱心类保持Python原版逻辑 ====================
+        //爱心类
         class Heart {
             constructor(generate_frame = 20) {
                 this._points = new Set();          // 原始爱心坐标集合
@@ -125,7 +125,6 @@
                 this.all_points = {};             // 每帧动态点坐标
                 this.generate_frame = generate_frame;
                 
-                // 保持Python原版参数
                 this.build(2000); // 保持2000个点
                 
                 // 预计算所有帧
@@ -143,7 +142,7 @@
                     this._points.add(key);
                 }
                 
-                // 爱心内扩散（边缘）- 保持Python原版逻辑
+                // 爱心内扩散（边缘）
                 const pointsArray = Array.from(this._points);
                 for (const key of pointsArray) {
                     const [x, y] = key.split(',').map(Number);
@@ -154,7 +153,7 @@
                     }
                 }
                 
-                // 爱心内再次扩散（中心）- 保持Python原版4000个点
+                // 爱心内再次扩散（中心）
                 for (let i = 0; i < 4000; i++) {
                     const randomKey = pointsArray[Math.floor(Math.random() * pointsArray.length)];
                     const [x, y] = randomKey.split(',').map(Number);
@@ -165,7 +164,7 @@
             }
             
             calc_position(x, y, ratio) {
-                // 保持Python原版计算逻辑
+                // 计算逻辑
                 const denominator = Math.pow(Math.pow(x - CANVAS_CENTER_X, 2) + Math.pow(y - CANVAS_CENTER_Y, 2), 0.520);
                 const force = 1 / denominator;
                 
@@ -176,7 +175,7 @@
             }
             
             calc(generate_frame) {
-                // 保持Python原版计算逻辑
+                // 计算逻辑
                 const ratio = 10 * curve(generate_frame / 10 * Math.PI);
                 const halo_radius = Math.floor(4 + 6 * (1 + curve(generate_frame / 10 * Math.PI)));
                 const halo_number = Math.floor(3000 + 4000 * Math.pow(Math.abs(curve(generate_frame / 10 * Math.PI)), 2));
@@ -200,7 +199,7 @@
                     }
                 }
                 
-                // 轮廓点 - 保持Python原版逻辑
+                // 轮廓点 
                 for (const key of this._points) {
                     const [x, y] = key.split(',').map(Number);
                     const newPoint = this.calc_position(x, y, ratio);
@@ -212,7 +211,7 @@
                     });
                 }
                 
-                // 中心点 - 保持Python原版逻辑
+                // 中心点 
                 for (const key of this._center_diffusion_points) {
                     const [x, y] = key.split(',').map(Number);
                     const newPoint = this.calc_position(x, y, ratio);
@@ -244,7 +243,7 @@
             }
         }
         
-        // ==================== 动画控制保持Python原版节奏 ====================
+        // 动画控制
         let heart;
         let frame = 0;
         
@@ -253,18 +252,18 @@
             resizeCanvas();
             heart = new Heart();
             
-            // 开始动画循环 - 保持Python原版160ms间隔
+            // 开始动画循环 160ms间隔
             animate();
         }
         
-        // 动画循环 - 保持Python原版帧率
+        // 动画循环 帧率
         function animate() {
             if (heart) {
                 heart.render(frame);
                 frame++;
             }
             
-            // 保持Python原版的160ms延迟
+            // 160ms延迟
             setTimeout(() => {
                 requestAnimationFrame(animate);
             }, 160);
